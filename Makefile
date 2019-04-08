@@ -1,17 +1,17 @@
 #!Makefile
 
-C_SOURCES = $(shell find . −name "*.c") 
-C_OBJECTS = $(patsubst %.c, %.o, $(C_SOURCES)) 
-S_SOURCES = $(shell find . −name "*.s") 
+C_SOURCES = $(shell find . -name "*.c")
+C_OBJECTS = $(patsubst %.c, %.o, $(C_SOURCES))
+S_SOURCES = $(shell find . -name "*.s")
 S_OBJECTS = $(patsubst %.s, %.o, $(S_SOURCES))
 
 CC = gcc
 LD = ld 
 ASM = nasm
 
-C_FLAGS = −c −Wall −m32 −ggdb −gstabs+ −nostdinc −fno−builtin −fno−stack− protector −I include
-LD_FLAGS = −T tools/kernel.ld −m elf_i386 −nostdlib 
-ASM_FLAGS = −f elf −g −F stabs
+C_FLAGS = -c -Wall -m32 -ggdb -gstabs+ -nostdinc -fno-builtin -fno-stack-protector -I include
+LD_FLAGS = -T scripts/kernel.ld -m elf_i386 -nostdlib
+ASM_FLAGS = -f elf -g -F stabs
 
 all: $(S_OBJECTS) $(C_OBJECTS) link update_image 
 
@@ -25,7 +25,7 @@ all: $(S_OBJECTS) $(C_OBJECTS) link update_image
 
 link:
 	@echo 链接内核文件...
-	$(LD) $(LD_FLAGS) $(S_OBJECTS) $(C_OBJECTS) −o jorny_kernel
+	$(LD) $(LD_FLAGS) $(S_OBJECTS) $(C_OBJECTS) -o jorny_kernel
 
 .PHONY:clean 
 clean:
@@ -34,7 +34,7 @@ clean:
 .PHONY:update_image 
 update_image:
 	sudo mount floppy.img /mnt/kernel
-	sudo cp hx_kernel /mnt/kernel/hx_kernel
+	sudo cp jorny_kernel /mnt/kernel/jorny_kernel
 	sleep 1
 	sudo umount /mnt/kernel
 
@@ -48,10 +48,10 @@ umount_image:
 
 .PHONY:qemu 
 qemu:
-	qemu −fda floppy.img −boot a
+	qemu -fda floppy.img -boot a
 
 .PHONY:debug 
 debug:
-	qemu −S −s −fda floppy.img −boot a & 
+	qemu -S -s -fda floppy.img -boot a &
 	sleep 1
-	cgdb −x tools/gdbinit
+	cgdb -x scripts/gdbinit
