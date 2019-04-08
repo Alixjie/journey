@@ -106,7 +106,7 @@ void console_write_hex(uint32_t n, real_color_t back, real_color_t fore)
     char head_are_zeros = 1;
     console_write_color("0x", back, fore);
 
-    for (uint8_t i = 28; i >= 0; i -= 4)
+    for (int8_t i = 28; i >= 0; i -= 4)
     {
         uint32_t temp = (n >> i) & 0x0F;
         if ((temp == 0) && head_are_zeros)
@@ -122,43 +122,29 @@ void console_write_hex(uint32_t n, real_color_t back, real_color_t fore)
 
 void console_write_dec(uint32_t n, real_color_t back, real_color_t fore)
 {
-    char head_are_zeros = 1;
-
-    for (uint8_t i = 28; i >= 0; i -= 4)
-    {
-        uint32_t temp = (n >> i) & 0x0F;
-        if ((temp == 0) && head_are_zeros)
-            continue;
-
-        head_are_zeros = 0;
-        if (temp >= 0x0A)
-        {
-            switch (temp)
-            {
-            case 0x0A:
-                console_write("10");
-                break;
-            case 0x0B:
-                console_write("11");
-                break;
-            case 0x0C:
-                console_write("12");
-                break;
-            case 0x0D:
-                console_write("13");
-                break;
-            case 0x0E:
-                console_write("14");
-                break;
-            case 0x0F:
-                console_write("15");
-                break;
-            default:
-                console_write("error!");
-                break;
-            }
-        }
-        else
-            console_putc_color(temp + '0', back, fore);
+    if (n == 0) {
+        console_putc_color('0', back, fore);
+        return;
     }
+
+    uint32_t rec = n;
+    char rigt_to_lift[32];
+    int i = 0;
+    
+    while (rec > 0)
+    {
+        rigt_to_lift[i] = '0' + (rec % 10);
+        rec /= 10;
+        ++i;
+    }
+    rigt_to_lift[i] = 0;
+    
+    char lift_to_right[32];
+    lift_to_right[i--] = 0;
+
+    int j = 0;
+    while(i >= 0)
+        lift_to_right[i--] = rigt_to_lift[j++];
+
+    console_write_color(lift_to_right, back, fore);
 }

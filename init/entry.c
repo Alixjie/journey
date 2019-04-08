@@ -8,6 +8,8 @@ int kern_entry()
 
     console_write_dec(32367, rc_black, rc_white);
 
+    console_write_color("\n", rc_black, rc_white);
+
     console_write_hex(32367, rc_black, rc_white);
     
     return 0;
