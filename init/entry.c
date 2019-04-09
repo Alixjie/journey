@@ -15,9 +15,9 @@ int kern_entry()
 
     int i = 1;
     char c= 'a';
-    char s[10] = "Hello, World!";
+    char s[20] = "Hello, World!";
 
-    printk("test int: %d\n test char: %c\n test string: %s\n", i, c, s);
+    printk("\ntest int: %d\n test char: %c\n test string: %s\n", i, c, s);
 
     return 0;
 }
