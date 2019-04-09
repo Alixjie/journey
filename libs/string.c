@@ -20,7 +20,7 @@ inline void bzero(void *dest, uint32_t len)
 }
 
 //长度存在问题
-inline int strcmp(const char *str1, const char *str2);
+inline int strcmp(const char *str1, const char *str2)
 {
     while ((*str1 != 0) && (*str2 != 0))
     {
@@ -41,7 +41,7 @@ inline char *strcpy(char *dest, const char *src)
     char *rec = dest;
 
     while (*src)
-        *dest++ = *scr++;
+        *dest++ = *src++;
     *dest = '\0';
 
     return rec;
@@ -54,7 +54,7 @@ inline char *strcat(char *dest, const char *src)
     while (*end++);
 
     while (*src)
-        *end++ = *scr++;
+        *end++ = *src++;
     *end = '\0';
 
     return dest;
@@ -64,7 +64,7 @@ inline int strlen(const char *src)
 {
     int i = 0;
 
-    while (*scr++)
+    while (*src++)
         ++i;
 
     return i;
