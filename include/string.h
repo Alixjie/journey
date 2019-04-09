@@ -1,7 +1,7 @@
 #ifndef INCLUDE_STRING_H
 #define INCLUDE_STRING_H
 
-#include "type.h"
+#include "types.h"
 
 void memcpy(uint8_t *dest, const uint8_t *src, uint32_t len); 
 
