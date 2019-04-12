@@ -1,5 +1,6 @@
 #include "console.h"
 #include "debug.h"
+#include "gdt.h"
 
 int kern_entry()
 {
@@ -8,6 +9,8 @@ int kern_entry()
     console_clear();
 
     print_cur_status();
+
+    init_gdt();
 
     console_write_color("check console function!\n", rc_black, rc_green);
 
