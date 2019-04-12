@@ -20,7 +20,7 @@ void print_cur_status()
         "movw %%ss, %3;"
         : "=m"(cs_reg), "=m"(ds_reg), "=m"(es_reg), "=m"(ss_reg));
 
-    printk("%d: @level: %d\n", level, (cs_reg & 0x03));
+    printk("%d: machine_level: %d\n", level, (cs_reg & 0x03));
 
     printk("%d: cs: %x\n", level, cs_reg);
     printk("%d: ds: %x\n", level, ds_reg);
@@ -52,3 +52,4 @@ void print_stack_trace()
         printk(" [0x%x] %s\n", *eip_reg, elf_lookup_symbol(*eip_reg, &kernel_elf));
         ebp_reg = (uint32_t *)*ebp_reg;
     }
+}
