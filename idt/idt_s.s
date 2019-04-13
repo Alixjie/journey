@@ -1,10 +1,3 @@
-; --------------------------------------------------
-; 	将 IDT 地址 载入 IDTR
-;
-; 	hurley 2013/11/07
-;
-;---------------------------------------------------
-
 [GLOBAL idt_flush]
 idt_flush:
 	mov eax, [esp+4]  ; 参数存入 eax 寄存器
@@ -68,7 +61,7 @@ ISR_NOERRCODE 29
 ISR_NOERRCODE 30
 ISR_NOERRCODE 31
 ; 32～255 用户自定义
-ISR_NOERRCODE 255
+ISR_NOERRCODE 128
 
 [GLOBAL isr_common_stub]
 [EXTERN isr_handler]
