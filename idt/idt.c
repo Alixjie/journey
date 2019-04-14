@@ -83,21 +83,17 @@ static void idt_set_gate(uint8_t num, uint32_t base, uint16_t sel, uint8_t flags
 	idt_entries[num].flags = flags; // | 0x60
 }
 
-// 调用中断处理函数
+// 调用中断处理函数 regs = ebp + 8 = 压入栈的esp（指向pt_regs结构体）
 void isr_handler(pt_regs *regs)
 {
 	if (interrupt_handlers[regs->int_no])
-	{
 		interrupt_handlers[regs->int_no](regs);
-	}
 	else
-	{
-		printk_color(rc_black, rc_blue, "Unhandled interrupt: %d\n", regs->int_no);
-	}
+		printk_color(rc_black, rc_blue, "Unset interrupt: %d\n", regs->int_no);
 }
 
 // 注册一个中断处理函数
-void register_interrupt_handler(uint8_t n, interrupt_handler_t h)
+void register_interrupt_handler(uint8_t n, interrupt_handler_t func)
 {
-	interrupt_handlers[n] = h;
+	interrupt_handlers[n] = func;
 }

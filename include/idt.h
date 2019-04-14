@@ -48,7 +48,7 @@ struct pt_regs_t {
 typedef void (*interrupt_handler_t)(pt_regs *);
 
 // 注册一个中断处理函数
-void register_interrupt_handler(uint8_t n, interrupt_handler_t h);
+void register_interrupt_handler(uint8_t n, interrupt_handler_t func);
 
 // 调用中断处理函数
 void isr_handler(pt_regs *regs);
