@@ -5,13 +5,13 @@
 
 void timer_callback(pt_regs *regs)
 {
-    static uint32_t time_start_now = 0;
-    printk_color(rc_black, rc_red, "Tick: %d\n", time_start_now++);
+    static uint32_t tick = 0;
+    printk_color(rc_black, rc_red, "Tick: %d\n", tick++);
 }
 
 void init_timer(uint32_t frequency)
 {
-    register_interrupt_handler(irq0, timer_callback);
+    register_interrupt_handler((uint8_t)IRQ0, timer_callback);
 
     // Intel 8253/8254 PIT芯片 I/O端口地址范围是40h~43h
 	// 输入频率为 1193180，frequency 即每秒中断次数

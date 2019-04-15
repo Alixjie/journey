@@ -2,6 +2,7 @@
 #include "debug.h"
 #include "gdt.h"
 #include "idt.h"
+#include "time.h"
 
 int kern_entry()
 {
