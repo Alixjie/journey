@@ -34,6 +34,10 @@ int kern_entry()
     asm volatile("int $0x3");
     asm volatile("int $0x4");
 
+    init_timer(200); // 开启中断
+    
+    asm volatile("sti");
+
     //panic("It's a test!");
 
     return 0;

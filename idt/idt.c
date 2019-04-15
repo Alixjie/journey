@@ -21,6 +21,38 @@ extern void idt_flush(uint32_t);
 // 初始化中断描述符表
 void init_idt()
 {
+	// 初始化两片级联的 Intel 8259A 芯片
+
+	// 主片端口 0x20 0x21
+	// 从片端口 0xA0 0xA1
+
+	//设置ICW1
+	// 级连、边沿触发、ICW4
+	outb(0x20, 0x11);
+	outb(0xA0, 0x11);
+
+	// 设置ICW2
+	// 设置主片 IRQ 从 0x20(32) 号中断开始
+	// 设置从片 IRQ 从 0x28(40) 号中断开始
+	outb(0x21, 0x20);
+	outb(0xA1, 0x28);
+
+	// 设置ICW3
+	// 设置主片 IR2 引脚连接从片
+	// 设置从片输出引脚和主片 IR2 号相连
+	outb(0x21, 0x04);
+	outb(0xA1, 0x02);
+
+	// 设置ICW4
+	// 设置主片和从片按照 8086 的方式工作（全嵌套、非缓冲、正常中断结束）
+	outb(0x21, 0x01);
+	outb(0xA1, 0x01);
+
+	// 设置OCW1
+	// 设置主从片允许中断
+	outb(0x21, 0x0);
+	outb(0xA1, 0x0);
+
 	bzero((uint8_t *)&interrupt_handlers, sizeof(interrupt_handler_t) * 256);
 
 	idt_ptr.limit = sizeof(idt_entry_t) * 256 - 1;
@@ -62,6 +94,24 @@ void init_idt()
 	idt_set_gate(30, (uint32_t)isr30, 0x08, 0x8E);
 	idt_set_gate(31, (uint32_t)isr31, 0x08, 0x8E);
 
+	// 32-47:  用于 8259 连接外设的中断处理
+	idt_set_gate(32, (uint32_t)irq0, 0x08, 0x8E);
+	idt_set_gate(33, (uint32_t)irq1, 0x08, 0x8E);
+	idt_set_gate(34, (uint32_t)irq2, 0x08, 0x8E);
+	idt_set_gate(35, (uint32_t)irq3, 0x08, 0x8E);
+	idt_set_gate(36, (uint32_t)irq4, 0x08, 0x8E);
+	idt_set_gate(37, (uint32_t)irq5, 0x08, 0x8E);
+	idt_set_gate(38, (uint32_t)irq6, 0x08, 0x8E);
+	idt_set_gate(39, (uint32_t)irq7, 0x08, 0x8E);
+	idt_set_gate(40, (uint32_t)irq8, 0x08, 0x8E);
+	idt_set_gate(41, (uint32_t)irq9, 0x08, 0x8E);
+	idt_set_gate(42, (uint32_t)irq10, 0x08, 0x8E);
+	idt_set_gate(43, (uint32_t)irq11, 0x08, 0x8E);
+	idt_set_gate(44, (uint32_t)irq12, 0x08, 0x8E);
+	idt_set_gate(45, (uint32_t)irq13, 0x08, 0x8E);
+	idt_set_gate(46, (uint32_t)irq14, 0x08, 0x8E);
+	idt_set_gate(47, (uint32_t)irq15, 0x08, 0x8E);
+
 	// 128 将来用于实现系统调用
 	idt_set_gate(128, (uint32_t)isr128, 0x08, 0x8E);
 
@@ -90,6 +140,18 @@ void isr_handler(pt_regs *regs)
 		interrupt_handlers[regs->int_no](regs);
 	else
 		printk_color(rc_black, rc_blue, "Unset interrupt: %d\n", regs->int_no);
+}
+
+// IRQ 处理函数
+void irq_handler(pt_regs *regs)
+{
+	// 设置OCW2（正常EOI中断结束命令，使ISR中最高的非零位清0）
+	if (regs->int_no >= 40) {
+		// 发送重设信号给从片
+		outb(0xA0, 0x20);
+	}
+	// 发送重设信号给主片
+	outb(0x20, 0x20);
 }
 
 // 注册一个中断处理函数
