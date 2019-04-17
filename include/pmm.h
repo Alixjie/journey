@@ -21,6 +21,8 @@
 extern uint8_t kern_start[];
 extern uint8_t kern_end[];
 
+extern uint32_t phy_page_count;
+
 // 输出 BIOS 提供的物理内存布局 
 void show_memory_map();
 
