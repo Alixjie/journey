@@ -42,7 +42,9 @@ int kern_entry()
 
     printk("Kernel in memory start: 0x%08x\n", kern_start);
     printk("Kernel in memory end: 0x%08x\n", kern_end);
-    printk("kernel in memory used: %dKB", (kern_end - kern_start + 1023) / 1024); //取天棚
+    printk("kernel in memory used: %dKB\n\n", (kern_end - kern_start + 1023) / 1024); //取天棚
+
+    show_memory_map();
 
     //panic("It's a test!");
 
