@@ -3,6 +3,7 @@
 #include "gdt.h"
 #include "idt.h"
 #include "time.h"
+#include "pmm.h"
 
 int kern_entry()
 {
@@ -35,9 +36,13 @@ int kern_entry()
     asm volatile("int $0x3");
     asm volatile("int $0x4");
 
-    init_timer(200); // 开启中断
-    
+    //init_timer(200); // 开启中断
+
     asm volatile("sti");
+
+    printk("Kernel in memory start: 0x%08x\n", kern_start);
+    printk("Kernel in memory end: 0x%08x\n", kern_end);
+    printk("kernel in memory used: %dKB", (kern_end - kern_start + 1023) / 1024); //取天棚
 
     //panic("It's a test!");
 
