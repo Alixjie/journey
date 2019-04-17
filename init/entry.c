@@ -46,6 +46,25 @@ int kern_entry()
 
     show_memory_map();
 
+    init_pmm();
+    printk_color(rc_black, rc_red, "\nThe Count of Physical Memory Page is: % u\n\n", phy_page_count);
+
+    uint32_t allc_addr = NULL;
+
+    printk_color(rc_black, rc_yellow, "Test Physical Memory Alloc :\n");
+
+    allc_addr = pmm_alloc_page();
+    printk_color(rc_black, rc_yellow, "Alloc Physical Addr: 0x%08X\n", allc_addr);
+
+    allc_addr = pmm_alloc_page();
+    printk_color(rc_black, rc_yellow, "Alloc Physical Addr: 0x%08X\n", allc_addr);
+
+    allc_addr = pmm_alloc_page();
+    printk_color(rc_black, rc_yellow, "Alloc Physical Addr: 0x%08X\n", allc_addr);
+    
+    allc_addr = pmm_alloc_page();
+    printk_color(rc_black, rc_yellow, "Alloc Physical Addr: 0x%08X\n", allc_addr);
+
     //panic("It's a test!");
 
     return 0;
