@@ -11,10 +11,11 @@ static pte_t pte_kern[PTE_COUNT][PTE_SIZE] __attribute__((aligned(PAGE_SIZE)));
 void init_vmm()
 {
     uint32_t kern_index = PGD_INDEX(PAGE_OFFSET);
+    uint32_t rec = kern_index;
 
     // 映射页目录项
-    for (uint32_t i = 0; kern_index < kern_index + PTE_COUNT; ++i)
-        pgd_kern[kern_index++] = (uint32_t)(pte_kern[i] - PAGE_OFFSET) | PAGE_PRESENT | PAGE_WRITE;
+    for (uint32_t i = 0; kern_index < rec + PTE_COUNT; ++i)
+        pgd_kern[kern_index++] = ((uint32_t)pte_kern[i] - PAGE_OFFSET) | PAGE_PRESENT | PAGE_WRITE;
 
     // 映射页表项
     uint32_t *pte = (uint32_t *)pte_kern;
@@ -44,7 +45,7 @@ void map(pgd_t *pgd_now, uint32_t va, uint32_t pa, uint32_t flags)
 
     if (!temp)
     {
-        temp = pmm_alloc_page();
+        temp = (pte_t *)pmm_alloc_page();
         pgd_now[va_pgd_index] = (uint32_t)temp | PAGE_PRESENT | PAGE_WRITE;
 
         temp = (pte_t *)((uint32_t)temp + PAGE_OFFSET);

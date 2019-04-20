@@ -63,7 +63,7 @@ __attribute__((section(".init.text"))) void kern_entry()
                  : "r"(kern_stack_top));
 
     // 更新全局 multiboot_t 指针
-    glb_mboot_ptr = temp_mboot_ptr + PAGE_OFFSET;
+    glb_mboot_ptr = (multiboot_t *)((uint32_t)temp_mboot_ptr + PAGE_OFFSET);
 
     kern_init();
 }
@@ -72,27 +72,13 @@ void kern_init()
 {
     init_debug();
 
-    console_clear();
-
-    print_cur_status();
-
     init_gdt();
 
     init_idt();
 
-    console_write_color("check console function!\n", rc_black, rc_green);
+    init_pmm();
 
-    console_write_dec(32367, rc_black, rc_white);
-
-    console_write_color("\n", rc_black, rc_white);
-
-    console_write_hex(32367, rc_black, rc_white);
-
-    int i = 1;
-    char c = 'a';
-    char s[20] = "Hello, World!";
-
-    printk("\ntest int: %d\ntest char: %c\ntest string: %s\n", i, c, s);
+    console_clear();
 
     print_cur_status();
 
@@ -109,7 +95,6 @@ void kern_init()
 
     show_memory_map();
 
-    init_pmm();
     printk_color(rc_black, rc_red, "\nThe Count of Physical Memory Page is: % u\n\n", phy_page_count);
 
     uint32_t allc_addr = NULL;
@@ -119,11 +104,25 @@ void kern_init()
     allc_addr = pmm_alloc_page();
     printk_color(rc_black, rc_yellow, "Alloc Physical Addr: 0x%08X\n", allc_addr);
 
-    allc_addr = pmm_alloc_page();
-    printk_color(rc_black, rc_yellow, "Alloc Physical Addr: 0x%08X\n", allc_addr);
+    init_vmm();
+
+    map(pgd_kern, 1, allc_addr, PAGE_PRESENT | PAGE_USER | PAGE_WRITE);
 
     allc_addr = pmm_alloc_page();
     printk_color(rc_black, rc_yellow, "Alloc Physical Addr: 0x%08X\n", allc_addr);
+
+    uint32_t rec, bol;
+    bol = get_mapping(pgd_kern, 1, &rec);
+
+    if (bol)
+        printk("rec = 0x%08x\n", rec);
+
+    unmap(pgd_kern, 1);
+    
+    bol = get_mapping(pgd_kern, 1, &rec);
+
+    if (bol)
+        printk("rec = 0x%08x\n", rec);
 
     allc_addr = pmm_alloc_page();
     printk_color(rc_black, rc_yellow, "Alloc Physical Addr: 0x%08X\n", allc_addr);
