@@ -1,25 +1,26 @@
 #include "common.h"
 #include "elf.h"
 #include "string.h"
+#include "vmm.h"
 
 elf_t elf_from_multiboot(multiboot_t *mb)
 {
     elf_t elf;
     elf_section_header_t *esh = (elf_section_header_t *)mb->addr;
 
-    uint32_t shstrtab = esh[mb->shndx].addr; //段名 字符串表首地址
+    uint32_t shstrtab = esh[mb->shndx].addr; // 段名 字符串表首地址
 
     for (int i = 0; i < mb->num; ++i)
     {
         const char *name = (const char *)(shstrtab + esh[i].name);
         if (strcmp(name, ".strtab") == TRUE)
         {
-            elf.strtab = (const char *)esh[i].addr;
+            elf.strtab = (const char *)(esh[i].addr + PAGE_OFFSET);
             elf.strtabsz = esh[i].size;
         }
         if (strcmp(name, ".symtab") == TRUE)
         {
-            elf.symtab = (elf_symbol_t *)esh[i].addr;
+            elf.symtab = (elf_symbol_t *)(esh[i].addr + PAGE_OFFSET);
             elf.symtabsz = esh[i].size;
         }
     }

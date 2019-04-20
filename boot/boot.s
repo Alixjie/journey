@@ -9,33 +9,31 @@ MBOOT_HEADER_FLAGS	equ MBOOT_PAGE_ALIGN | MBOOT_MEM_INFO
 MBOOT_CHECKSUM	equ - (MBOOT_HEADER_MAGIC + MBOOT_HEADER_FLAGS)
 
 [BITS 32]
-section .text
+section .init.text
 
 dd MBOOT_HEADER_MAGIC
 dd MBOOT_HEADER_FLAGS
 dd MBOOT_CHECKSUM
 
 [GLOBAL start]
-[GLOBAL glb_mboot_ptr]
+[GLOBAL temp_mboot_ptr]
 [EXTERN kern_entry]
 
 start:
     cli
 
-    mov esp, glb_mboot_ptr - 1
+    mov esp, temp_mboot_ptr - 1
     mov ebp, 0
     and esp, 0FFFFFFF0H
-    mov [glb_mboot_ptr], ebx
+    mov [temp_mboot_ptr], ebx
     call kern_entry
 
 stop:
     hlt
     jmp stop
 
-section .bss
+section .init.data
 
-stack:
-    resb 32768
+stack: times 1024 db 0 
 
-glb_mboot_ptr:
-    resb 4
+temp_mboot_ptr: dd 0
