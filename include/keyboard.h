@@ -11,6 +11,6 @@
 
 void init_kbd();
 
-uint8_t get_scan_code();
+int8_t get_scan_code();
 
 #endif

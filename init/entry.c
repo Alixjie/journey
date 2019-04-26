@@ -132,5 +132,11 @@ void kern_init()
     init_kbd();
 
     while (1)
-        print_cur_status("%c", get_scan_code());
+    {
+        int8_t temp = get_scan_code();
+        if (temp > 0)
+            printk("%x", temp);
+        else
+            continue;
+    }
 }

@@ -21,7 +21,7 @@ void kbd_callback(pt_regs *regs)
         printk("Data has not parpered!\n");
     data = inb(KB_DATA_PORT);
 
-    if (kbd_buf.w == kbd_buf.r)
+    if (kbd_buf.w == (kbd_buf.r - 1))
         printk("buffer is full!");
 
     else
@@ -35,14 +35,14 @@ void init_kbd()
 {
     register_interrupt_handler((uint8_t)IRQ1, kbd_callback);
 
-    kbd_buf.w = 1;
+    kbd_buf.w = 0;
     kbd_buf.r = 0;
 }
 
-uint8_t get_scan_code()
+int8_t get_scan_code()
 {
     kbd_buf.r %= INPUT_BUF;
-    if (kbd_buf.r == (kbd_buf.w - 1))
+    if (kbd_buf.r == kbd_buf.w)
         return -1;
     else
         return kbd_buf.buf[kbd_buf.r++];
