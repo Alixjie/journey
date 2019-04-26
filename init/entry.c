@@ -5,6 +5,7 @@
 #include "time.h"
 #include "pmm.h"
 #include "vmm.h"
+#include "keyboard.h"
 
 // 内核初始化函数
 void kern_init();
@@ -128,7 +129,8 @@ void kern_init()
     printk_color(rc_black, rc_yellow, "Alloc Physical Addr: 0x%08X\n", allc_addr);
 
     //panic("It's a test!");
+    init_kbd();
 
     while (1)
-        asm volatile("hlt");
+        print_cur_status("%c", get_scan_code());
 }
